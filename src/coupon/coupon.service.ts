@@ -6,6 +6,7 @@ import { CouponEntity } from './entities/coupon.entity';
 import { COUPON_REPOSITORY } from 'src/shared/utils/tokens';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { WinstonLoggerService } from 'src/shared/infrastructure/logger/winston-logger.service';
+import { Coupon } from './dto/coupon.dto';
 
 @Injectable()
 export class CouponService {
@@ -24,7 +25,7 @@ export class CouponService {
       return cachedCoupons;
     }
 
-    let coupons: Readonly<CouponEntity[]>;
+    let coupons: Readonly<Coupon[]>;
     try {
       coupons = await this.couponRepository.findAll();
  //     throw new UnprocessableEntityException('error requesting coupons');
@@ -32,6 +33,7 @@ export class CouponService {
       this.logger.error('error requesting coupons');
       throw error;
     }
+    
     const couponsFiltered : CouponEntity[] = coupons.filter(coupon => today < new Date(coupon.expiresAt));
     await this.cacheManager.set('couponsFiltered', couponsFiltered);
     return couponsFiltered;
