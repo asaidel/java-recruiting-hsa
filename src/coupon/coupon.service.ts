@@ -11,7 +11,7 @@ import { WinstonLoggerService } from 'src/shared/infrastructure/logger/winston-l
 export class CouponService {
   constructor(
     @Inject(COUPON_REPOSITORY) private readonly couponRepository: CouponRepository,    
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,    
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,    
     private readonly logger: WinstonLoggerService
   ) { }
 
@@ -24,7 +24,7 @@ export class CouponService {
       return cachedCoupons;
     }
 
-    let coupons: CouponEntity[];
+    let coupons: Readonly<CouponEntity[]>;
     try {
       coupons = await this.couponRepository.findAll();
  //     throw new UnprocessableEntityException('error requesting coupons');

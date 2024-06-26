@@ -13,9 +13,9 @@ export class CouponAxiosRepository implements CouponRepository {
         private configService: ConfigService
     ) {}
 
-    async findAll(): Promise<Coupon[]> {
-        return await this.httpClientService.get<Coupon[]>({
-            url: this.configService.get<string>('API_COUPON'),
+    async findAll(): Promise<Readonly<Coupon[]>> {
+        return await this.httpClientService.get<Readonly<Coupon[]>>({
+            url: this.configService.get<Readonly<string>>('API_COUPON'),
         });
     }
 }

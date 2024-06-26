@@ -13,9 +13,9 @@ export class CategoryAxiosRepository implements CategoryRepository {
         private readonly configService: ConfigService
     ) {}
 
-    async findAll(): Promise<Category> {
-        return await this.httpClientService.get<Category>({
-            url: this.configService.get<string>('API_CATEGORY'),
+    async findAll(): Promise<Readonly<Category>> {
+        return await this.httpClientService.get<Readonly<Category>>({
+            url: this.configService.get<Readonly<string>>('API_CATEGORY'),
         });
     }
 }
