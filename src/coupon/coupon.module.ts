@@ -7,6 +7,7 @@ import { TYPES } from 'src/shared/utils/types';
 import { AxiosService } from 'src/shared/infrastructure/http-client/axios.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import { WinstonLoggerService } from 'src/shared/infrastructure/logger/winston-logger.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [CacheModule.register({
@@ -15,6 +16,7 @@ import { WinstonLoggerService } from 'src/shared/infrastructure/logger/winston-l
   controllers: [CouponController],
   providers: [ 
     WinstonLoggerService,
+    ConfigService,
     CouponService,
     {
       provide: COUPON_REPOSITORY,

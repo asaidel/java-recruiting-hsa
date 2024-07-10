@@ -10,7 +10,7 @@ export class CouponAxiosRepository implements CouponRepository {
     constructor(
         @Inject(TYPES.HttpClientService)
         private readonly httpClientService: HttpClientService,
-        private configService: ConfigService
+        private readonly configService: ConfigService
     ) {}
 
     async findAll(): Promise<Readonly<Coupon[]>> {

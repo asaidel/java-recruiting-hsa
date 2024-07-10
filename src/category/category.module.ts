@@ -7,12 +7,14 @@ import { AxiosService } from 'src/shared/infrastructure/http-client/axios.servic
 import { CATEGORY_REPOSITORY } from 'src/shared/utils/tokens';
 import { CategoryAxiosRepository } from './repositories/category.repository-axios';
 import { WinstonLoggerService } from 'src/shared/infrastructure/logger/winston-logger.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [HttpModule],
   controllers: [CategoryController],
   providers: [
     WinstonLoggerService,
+    ConfigService,
     CategoryService,
     {
       provide: CATEGORY_REPOSITORY,
