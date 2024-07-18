@@ -1,6 +1,4 @@
-<a href="https://concrete.com.br/"><img src=".github/concrete_symbol.png" width="180px" align="right" /></a>
-
-# Desafio Java Concrete
+# Desafio Node Accenture
 
 Desafio técnico para evaluar el conocimiento de los aspirantes a unirse al equipo de **Backend**.
 
