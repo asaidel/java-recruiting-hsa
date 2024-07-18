@@ -8,6 +8,8 @@ import { CouponModule } from './coupon.module';
 import { WinstonLoggerService } from 'src/shared/infrastructure/logger/winston-logger.service';
 import { TYPES } from 'src/shared/utils/types';
 import { ConfigService } from '@nestjs/config';
+import fs, { readFile } from 'node:fs/promises';
+import path from 'node:path';
 
 describe('CouponController', () => {
   let controller: CouponController;
@@ -61,34 +63,18 @@ describe('CouponController', () => {
 
   describe('findNotExpired', () => {
     it('should return an array of coupons', async () => {
-      const result: CouponEntity[] = [{
-        "id": "COUPON_1",
-        "description": "50% Discount",
-        "seller": "Crazy Seller",
-        "image": "https://i4.visitchile.com/img/GalleryContent/8822/slider/Torres_del_Paine.jpg",
-        "expiresAt": "2045-12-01"
-      },
-      {
-        "id": "COUPON_2",
-        "description": "5% Discount",
-        "seller": "The Seller",
-        "image": "https://i4.visitchile.com/img/GalleryContent/8822/slider/Torres_del_Paine.jpg",
-        "expiresAt": "2042-12-25"
-      },
-      {
-        "id": "COUPON_4",
-        "description": "1% Discount",
-        "seller": "Mega Discount",
-        "image": "https://i4.visitchile.com/img/GalleryContent/8822/slider/Torres_del_Paine.jpg",
-        "expiresAt": "2055-10-01"
-      }
-      ];
+      const relativePath = 'test/data/coupons-ok.json';
+      const filePath = path.resolve('.', relativePath);
+      const fileContent = await readFile(filePath, 'utf8');     
+      const result: CouponEntity[] = JSON.parse(fileContent);
 
       jest.spyOn(service, 'findNotExpired').mockImplementation(async () => result);
 
       const found = await controller.findNotExpired();
+      expect(found.length).toBe(result.length);
 
       expect(found[0].expiresAt).toBe(result[0].expiresAt);
+      expect(found[0].description).toBe(result[0].description);
     });
   });
 
@@ -96,3 +82,4 @@ describe('CouponController', () => {
     expect(controller).toBeDefined();
   });
 });
+

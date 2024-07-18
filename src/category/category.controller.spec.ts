@@ -7,10 +7,11 @@ import { WinstonLoggerService } from 'src/shared/infrastructure/logger/winston-l
 import { TYPES } from 'src/shared/utils/types';
 import { ConfigService } from '@nestjs/config';
 import { CategoryEntity } from './entities/category.entity';
+import path from 'node:path';
+import { readFile } from 'node:fs/promises';
 
 describe('CategoryController', () => {
   let controller: CategoryController;
-  let service: CategoryService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,87 +49,39 @@ describe('CategoryController', () => {
   }).compile();
 
     controller = module.get<CategoryController>(CategoryController);
-    service = module.get<CategoryService>(CategoryService);
   });
 
   describe('findTop', () => {
     it('should return top array of categories', async () => {
-      const result: CategoryEntity[] = [{
-        "id": "MOB",
-        "name": "MOBILE_MARKET",
-        "subcategories": [
-          {
-            "id": "video-games",
-            "name": "Video Games",
-            "relevance": 150,
-            "subcategories": [
-              {
-                "id": "nintendo",
-                "name": "Nintendo",
-                "smallImageUrl": "https://i4.visitchile.com/img/GalleryContent/8822/slider/Torres_del_Paine.jpg",
-                "subcategories": [
-                  {
-                    "id": "switch",
-                    "name": "Switch",
-                    "relevance": 422
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id": "toys",
-            "name": "Toys",
-            "relevance": 99,
-            "subcategories": [
-              {
-                "id": "puzzles",
-                "name": "Puzzles",
-                "relevance": 100,
-                "smallImageUrl": "https://i4.visitchile.com/img/GalleryContent/8822/slider/Torres_del_Paine.jpg",
-                "subcategories": []
-              }
-            ]
-          },
-          {
-            "id": "health",
-            "name": "Health",
-            "relevance": 6,
-            "subcategories": []
-          },
-          {
-            "id": "travel",
-            "name": "Travel",
-            "relevance": 5,
-            "subcategories": []
-          },
-          {
-            "id": "food",
-            "name": "Food",
-            "relevance": 4,
-            "subcategories": [
-              {
-                "id": "hamburger",
-                "name": "Hamburger",
-                "relevance": 350,
-                "smallImageUrl": "https://i4.visitchile.com/img/GalleryContent/8822/slider/Torres_del_Paine.jpg",
-                "subcategories": []
-              }
-            ]
-          }
-        ]
-      }
-      ];
+      const relativePath = 'test/data/categories-ok.json';
+      const filePath = path.resolve('.', relativePath);
+      const fileContent = await readFile(filePath, 'utf8');      
+      const result: CategoryEntity[] = JSON.parse(fileContent);
 
       jest.spyOn(controller, 'findTop').mockImplementation(async () => result);
       
       const found = await controller.findTop(5);
-
-      expect(found[0].name).toBe(result[0].name);
+      expect(areCategoriesEqual(found, result)).toBe(true);
     });
   });
+
+  function areCategoriesEqual(cat1: any, cat2: any) {
+    if (cat1 === cat2) return true;
+    if (typeof cat1 !== 'object' || typeof cat2 !== 'object') return false;
+    if (cat1 === null || cat2 === null) return false;
+    if (Object.keys(cat1).length !== Object.keys(cat2).length) return false;
+  
+    for (const key in cat1) {
+      if (!cat2.hasOwnProperty(key) || !areCategoriesEqual(cat1[key], cat2[key])) {
+        return false;
+      }
+    }
+  
+    return true;
+  }
   
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 });
+  
